@@ -50,7 +50,7 @@ func (s *Story) Validate() error {
 		return errors.New("story has no chapters")
 	}
 	for _, c := range s.Chapters {
-		if storyType == "story" && (c.Title.En == "" || c.Title.Ja == "") {
+		if storyType == "story" && (c.Title == nil || (c.Title.En == "" || c.Title.Ja == "")) {
 			return errors.New("chapter title is incomplete for story")
 		}
 		if len(c.Sentences) == 0 {
