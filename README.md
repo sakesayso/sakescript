@@ -9,9 +9,9 @@ Each SakeScript ZIP archive represents a single unit of learning content (e.g., 
 - Manifest File: A `manifest.json` file containing metadata about the learning content.
 - Content Files: `main.json` and various files (text, images, audio) constituting the learning material.
 
-The zip cli can be used to create a SakeScript archive, e.g.:
+To create a SakeScript archive, you can use the zip cli. Ensure to include all necessary files (JSON files, images, etc.) in the archive. For example:
 ```sh
-zip my-story-name.zip *.json
+zip my-story-name.zip manifest.json main.json images/*
 ```
 
 ## main.json: Content File Format
@@ -19,10 +19,16 @@ zip my-story-name.zip *.json
 The `main.json` file contains the main content of the learning material. SakeScript currently supports two types, 'story' and 'article'. The format for each is described below.
 
 - title: A map of language codes to titles (e.g., "en": "The Mountain Trail").
-- cover: Currently only supports images. uri is either a relative path to an image file in the archive or a URL to an external image.
-- type: Type of content (e.g., "story", "article").
+- cover: This field supports image files. The `uri` can be a URL pointing to an external image (e.g., "https://example.org/cover.jpg") or a relative path to an image file within the archive (e.g., "images/cover.jpg"). For example:
+```json
+    "cover": {
+        "type": "image",
+        "uri": "images/cover.jpg" // or "https://example.org/cover.jpg"
+    }
+```
+- type: Type of content ("story" or "article").
 - chapters: List of chapters.
-    + title (optional): Currently only supported for 'story' type. A map of language codes to titles (e.g., "en": "About Tokyo").
+    + title (optional): Currently supported for 'story' type. A map of language codes to titles (e.g., "en": "About Tokyo").
     + sentences: List of sentences.
         * ja: Japanese sentence.
         * en: English sentence.
@@ -40,6 +46,10 @@ The `main.json` file contains the main content of the learning material. SakeScr
     "type": "story",
     "chapters": [
         {
+            "title": {
+                "en": "About Tokyo",
+                "ja": "東京について"
+            },
             "sentences": [
                 {
                     "ja": "東京は日本の首都です。",
