@@ -63,8 +63,8 @@ The `manifest.json` file in each SakeScript archive contains these fields:
 - type: Type of content (e.g., "story", "article").
 - version: Format version (e.g., "1.0").
 - title: A map of language codes to titles (e.g., "en": "The Mountain Trail").
-- created: Creation date (YYYY-MM-DD).
-- modified: Last modification date (YYYY-MM-DD).
+- created: Creation date, RFC3339 format (2020-12-29T12:00:00Z).
+- modified: Last modification date, RFC3339 format (2020-12-29T12:00:00Z).
 - author: Content author or creator.
 - language: Primary language of the content.
 - summary:  A map of language codes to summaries (e.g., "en": "A beginner-level story about a hike in the mountains.").
