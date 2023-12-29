@@ -39,6 +39,11 @@ func ZipIndexer(path string) ([]IndexEntry, error) {
 		return nil, err
 	}
 
+	// ensure index is at least []
+	if index == nil {
+		index = []IndexEntry{}
+	}
+
 	return index, nil
 }
 
@@ -49,7 +54,12 @@ func SortIndex(index []IndexEntry) {
 	})
 }
 
-func WriteIndex(index []IndexEntry, output string) error {
+func WriteIndex(index []IndexEntry, stripPrefix, output string) error {
+	for i := range index {
+		index[i].Path = strings.TrimPrefix(index[i].Path, stripPrefix)
+		index[i].Path = strings.TrimPrefix(index[i].Path, "/")
+	}
+
 	indexData, err := json.MarshalIndent(index, "", "  ")
 	if err != nil {
 		return err
