@@ -103,7 +103,9 @@ Example
 }
 ```
 
-Note: We recommend to use `uuidgen` or similar to generate an actually unique UUID.
+Note: We recommend to use `uuidgen` or https://www.uuidgenerator.net/ or similar to generate an actually unique UUID.
+
+If you include a cover image, we recommend using JPEG format for cover images to minimize file size. To convert a PNG image from e.g. DALL·E to JPEG, you can use ImageMagick with the following command:  `convert cover.png -resize 1080x -quality 92 cover.jpg`.
 
 ### Recommended Content Tags
 
