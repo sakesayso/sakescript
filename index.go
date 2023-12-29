@@ -13,13 +13,13 @@ import (
 	"strings"
 )
 
-func ZipIndexer(path string) ([]IndexEntry, error) {
+func ZipIndexer(stripPrefix, path string) ([]IndexEntry, error) {
 	var index []IndexEntry
 	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
 		}
-		if strings.HasSuffix(path, ".zip") {
+		if !info.IsDir() && strings.HasSuffix(path, ".zip") {
 			manifest, err := extractFile(path, "manifest.json")
 			if err != nil {
 				return err
@@ -30,7 +30,12 @@ func ZipIndexer(path string) ([]IndexEntry, error) {
 				if err != nil {
 					return err
 				}
-				index = append(index, IndexEntry{Path: path, Sha256: hash, Manifest: *manifest})
+
+				relativePath, err := filepath.Rel(stripPrefix, path)
+				if err != nil {
+					return err
+				}
+				index = append(index, IndexEntry{Path: relativePath, Sha256: hash, Manifest: *manifest})
 			}
 		}
 		return nil
