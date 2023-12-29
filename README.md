@@ -14,7 +14,48 @@ The zip cli can be used to create a SakeScript archive, e.g.:
 zip my-story-name.zip *.json
 ```
 
-## Manifest File Format
+## main.json: Content File Format
+
+The `main.json` file contains the main content of the learning material. SakeScript currently supports two types, 'story' and 'article'. The format for each is described below.
+
+- title: A map of language codes to titles (e.g., "en": "The Mountain Trail").
+- cover: Currently only supports images. uri is either a relative path to an image file in the archive or a URL to an external image.
+- type: Type of content (e.g., "story", "article").
+- chapters: List of chapters.
+    + title (optional): Currently only supported for 'story' type. A map of language codes to titles (e.g., "en": "About Tokyo").
+    + sentences: List of sentences.
+        * ja: Japanese sentence.
+        * en: English sentence.
+
+```json
+{
+    "title": {
+        "en": "Journey Through Japan",
+        "ja": "日本の旅"
+    },
+    "cover": {
+        "type": "image",
+        "uri": "https://www3.nhk.or.jp/news/html/20231111/K10014254991_2311111600_1111160953_01_02.jpg"
+    },
+    "type": "story",
+    "chapters": [
+        {
+            "sentences": [
+                {
+                    "ja": "東京は日本の首都です。",
+                    "en": "Tokyo is the capital of Japan."
+                },
+                {
+                    "ja": "新宿はにぎやかな場所です。",
+                    "en": "Shinjuku is a bustling area."
+                }
+            ]
+        }
+    ]
+}
+```
+
+## manifest.json: Metadata File Format
 
 The `manifest.json` file in each SakeScript archive contains these fields:
 
@@ -62,21 +103,21 @@ Example
 }
 ```
 
-Note: use `uuidgen` or similar to generate an actually unique UUID.
+Note: We recommend to use `uuidgen` or similar to generate an actually unique UUID.
 
-### Tags
+### Recommended Content Tags
 
-Alongside JLPT levels, SakeScript supports a set of tags to categorize content. It is recommended to use at least one JLPT level tag and one content tag.
+Alongside JLPT levels (N1-N5), SakeScript supports arbitrary tags to categorize content. We recommend to use one JLPT level tag and at least one content tag.
 
 Non-fiction content should use the following tags:
 - **AME** - for arts, media, entertainment
 - **TEC** - for technology, internet
 - **SCI** - for science, environment
-- **MED** - for health, medical
-- **SPO** - for sports
+- **MED** - for health, medical, fitness
+- **SPO** - for sports, esports
 - **LIF** - for lifestyle, leasure
 - **POL** - for politics, society
-- **BIZ** - for finance, business, economics
+- **BIZ** - for finance, business, economics, military
 
 Fiction content should use the following tags:
 - **ADV** - for adventure, exploration
@@ -128,47 +169,6 @@ Example
   }
   // ...
 ]
-```
-
-## main.json File Format
-
-The `main.json` file contains the main content of the learning material. SakeScript currently supports two types, 'story' and 'article'. The format for each is described below.
-
-- title: A map of language codes to titles (e.g., "en": "The Mountain Trail").
-- cover: Currently only supports images. uri is either a relative path to an image file in the archive or a URL to an external image.
-- type: Type of content (e.g., "story", "article").
-- chapters: List of chapters.
-    + title (optional): Currently only supported for 'story' type. A map of language codes to titles (e.g., "en": "About Tokyo").
-    + sentences: List of sentences.
-        * ja: Japanese sentence.
-        * en: English sentence.
-
-```json
-{
-    "title": {
-        "en": "Journey Through Japan",
-        "ja": "日本の旅"
-    },
-    "cover": {
-        "type": "image",
-        "uri": "https://www3.nhk.or.jp/news/html/20231111/K10014254991_2311111600_1111160953_01_02.jpg"
-    },
-    "type": "story",
-    "chapters": [
-        {
-            "sentences": [
-                {
-                    "ja": "東京は日本の首都です。",
-                    "en": "Tokyo is the capital of Japan."
-                },
-                {
-                    "ja": "新宿はにぎやかな場所です。",
-                    "en": "Shinjuku is a bustling area."
-                }
-            ]
-        }
-    ]
-}
 ```
 
 ## Contribution and Usage Guidelines
