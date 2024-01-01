@@ -24,7 +24,7 @@ func main() {
 	flag.StringVar(&directory, "dir", defaultDirectory, "directory to index")
 	flag.Parse()
 
-	index, err := sakescript.ZipIndexer("community", directory)
+	index, err := sakescript.ZipIndexer(directory, directory)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -38,7 +38,7 @@ func main() {
 		index = index[len(index)-indexLimit:]
 	}
 
-	err = sakescript.WriteIndex(index, defaultDirectory, fmt.Sprintf("./%s/index.json", defaultDirectory))
+	err = sakescript.WriteIndex(index, directory, fmt.Sprintf("./%s/index.json", directory))
 	if err != nil {
 		log.Fatal(err)
 	}

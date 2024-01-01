@@ -81,6 +81,7 @@ The `manifest.json` file in each SakeScript archive contains these fields:
 - license: License for the content (e.g., "Creative Commons").
 - tags: List of tags for the content.
 Optional fields:
+- teaserImage (optional): Teaser image for the content.
 - authorTwitter (optional): X/Twitter handle for the author.
 - authorNote (optional): Author's note about the content.
 - origin (optional): Source URL for the content.
@@ -98,6 +99,7 @@ Example
     "author": "SakeSaySo",
     "authorTwitter": "sakesayso",
     "authorNote": "demo story",
+    "teaserImage": "https://raw.githubusercontent.com/sakesayso/community/master/non-fiction/sci/2F98A92E-B14F-435F-B62E-2AD91FD0E862/cover.jpg",
     "created": "2020-12-13",
     "modified": "2023-12-13",
     "summary": {
