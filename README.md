@@ -7,7 +7,7 @@ This document details the **SakeScript format**, a structured file format design
 Each SakeScript ZIP archive represents a single unit of learning content (e.g., a story, a news article, a lesson, or exercise). The archive includes:
 
 - Manifest File: A `manifest.json` file containing metadata about the learning content.
-- Content Files: `main.json` and various files (text, images, audio) constituting the learning material.
+- Content Files: `main.json` for stories and articles or `main.txt` for decks. Optionally various files (text, images, audio) constituting the learning material.
 
 To create a SakeScript archive, you can use the zip cli. Ensure to include all necessary files (JSON files, images, etc.) in the archive. For example:
 ```sh
@@ -26,7 +26,7 @@ The `main.json` file contains the main content of the learning material. SakeScr
         "uri": "images/cover.jpg" // or "https://example.org/cover.jpg"
     }
 ```
-- type: Type of content ("story" or "article").
+- type: Type of content, "story", "article" or "deck".
 - chapters: List of chapters.
     + title (optional): Currently supported for 'story' type. A map of language codes to titles (e.g., "en": "About Tokyo").
     + sentences: List of sentences.
@@ -70,7 +70,7 @@ The `main.json` file contains the main content of the learning material. SakeScr
 The `manifest.json` file in each SakeScript archive contains these fields:
 
 - id: Unique script identifier for the content (e.g., UUID).
-- type: Type of content (e.g., "story", "article").
+- type: Type of content, "story", "article" or "deck".
 - version: Format version (e.g., "1.0").
 - title: A map of language codes to titles (e.g., "en": "The Mountain Trail").
 - created: Creation date, RFC3339 format (2020-12-29T12:00:00Z).
@@ -142,6 +142,18 @@ Fiction content should use the following tags:
 - **HIS** - for historical, period
 - **SFI** - for science fiction, futurism
 - **THR** - for thriller, mystery
+
+## Learning Decks for Space Repetition
+
+A "deck" in SakeScript format contains a series of flash cards. Vocabulary can be matched in the dictionary upon import to gain cross-reference and translation benefits. In the manifest, a deck is denoted with the manifest type "deck". Instead of a json file, we then expect a `main.txt` that contains the deck in a simple text format. For example:
+
+```
+乾杯（かんぱい）
+cheers, bottoms-up, prosit
+
+宴会（えんかい）
+party, banquet, reception
+```
 
 ## Repository Index File
 
