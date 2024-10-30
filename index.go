@@ -5,80 +5,18 @@ import (
 	"crypto/sha256"
 	"encoding/hex"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"io"
 	"os"
 	"path/filepath"
 	"sort"
 	"strings"
+	"time"
 )
 
-func ZipIndexer(stripPrefix, path string) ([]IndexEntry, error) {
-	var index []IndexEntry
-	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
-		if err != nil {
-			return err
-		}
-		if !info.IsDir() && strings.HasSuffix(path, ".zip") {
-			manifest, err := extractFile(path, "manifest.json")
-			if err != nil {
-				return err
-			}
+var ErrFileNotFound = errors.New("file not found")
 
-			if manifest != nil {
-				hash, err := computeHash(path)
-				if err != nil {
-					return err
-				}
-
-				relativePath, err := filepath.Rel(stripPrefix, path)
-				if err != nil {
-					return err
-				}
-				index = append(index, IndexEntry{Path: relativePath, Sha256: hash, Manifest: *manifest})
-			}
-		}
-		return nil
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	// ensure index is at least []
-	if index == nil {
-		index = []IndexEntry{}
-	}
-
-	return index, nil
-}
-
-// Sort sort index by created date desc
-func SortIndex(index []IndexEntry) {
-	sort.Slice(index, func(i, j int) bool {
-		return index[i].Manifest.Created > index[j].Manifest.Created
-	})
-}
-
-func WriteIndex(index []IndexEntry, stripPrefix, output string) error {
-	for i := range index {
-		index[i].Path = strings.TrimPrefix(index[i].Path, stripPrefix)
-		index[i].Path = strings.TrimPrefix(index[i].Path, "/")
-	}
-
-	indexData, err := json.MarshalIndent(index, "", "  ")
-	if err != nil {
-		return err
-	}
-
-	err = os.WriteFile(output, indexData, 0644)
-	if err != nil {
-		return err
-	}
-
-	return nil
-}
-
-func extractFile(zipPath, filename string) (*Manifest, error) {
+func Extract(zipPath, filename string) (*Manifest, error) {
 	r, err := zip.OpenReader(zipPath)
 	if err != nil {
 		return nil, err
@@ -105,10 +43,11 @@ func extractFile(zipPath, filename string) (*Manifest, error) {
 			return &manifest, nil
 		}
 	}
-	return nil, fmt.Errorf("file %s not found in %s", filename, zipPath)
+
+	return nil, ErrFileNotFound
 }
 
-func computeHash(zipPath string) (string, error) {
+func Hash(zipPath string) (string, error) {
 	file, err := os.Open(zipPath)
 	if err != nil {
 		return "", err
@@ -121,4 +60,76 @@ func computeHash(zipPath string) (string, error) {
 	}
 
 	return hex.EncodeToString(hasher.Sum(nil)), nil
+}
+
+type Index []IndexEntry
+
+func ParseIndex(stripPrefix, path string) (Index, error) {
+	var index []IndexEntry
+	err := filepath.Walk(path, func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		if !info.IsDir() && strings.HasSuffix(path, ".zip") {
+			manifest, err := Extract(path, ManifestFile)
+			if err != nil {
+				return err
+			}
+
+			if manifest != nil {
+				hash, err := Hash(path)
+				if err != nil {
+					return err
+				}
+
+				relativePath, err := filepath.Rel(stripPrefix, path)
+				if err != nil {
+					return err
+				}
+
+				index = append(index, IndexEntry{Path: relativePath, Sha256: hash, Manifest: *manifest})
+			}
+		}
+		return nil
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return index, nil
+}
+
+func (index Index) Sort() {
+	sort.Slice(index, func(i, j int) bool {
+		// parse rfc3339 date from string
+		iDate, err := time.Parse(time.RFC3339, index[i].Manifest.Created)
+		if err != nil {
+			return false
+		}
+		jDate, err := time.Parse(time.RFC3339, index[j].Manifest.Created)
+		if err != nil {
+			return false
+		}
+		return iDate.After(jDate)
+	})
+}
+
+func (index Index) Write(stripPrefix, output string) error {
+	for i := range index {
+		index[i].Path = strings.TrimPrefix(index[i].Path, stripPrefix)
+		index[i].Path = strings.TrimPrefix(index[i].Path, "/")
+	}
+
+	// keep it human readable
+	indexData, err := json.MarshalIndent(index, "", "  ")
+	if err != nil {
+		return err
+	}
+
+	err = os.WriteFile(output, indexData, 0644)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

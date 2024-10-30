@@ -24,21 +24,21 @@ func main() {
 	flag.StringVar(&directory, "dir", defaultDirectory, "directory to index")
 	flag.Parse()
 
-	index, err := sakescript.ZipIndexer(directory, directory)
+	index, err := sakescript.ParseIndex(directory, directory)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	// sort by date desc
 	if sortIndex {
-		sakescript.SortIndex(index)
+		index.Sort()
 	}
 
 	if indexLimit > 0 && len(index) > indexLimit {
 		index = index[len(index)-indexLimit:]
 	}
 
-	err = sakescript.WriteIndex(index, directory, fmt.Sprintf("./%s/index.json", directory))
+	err = index.Write(directory, fmt.Sprintf("./%s/index.json", directory))
 	if err != nil {
 		log.Fatal(err)
 	}
