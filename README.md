@@ -1,5 +1,8 @@
 # SakeScript Format Specification
 
+[![Go Report Card](https://goreportcard.com/badge/github.com/sakesayso/sakescript)](https://goreportcard.com/report/github.com/sakesayso/sakescript)
+[![GoDoc](https://godoc.org/github.com/sakesayso/sakescript?status.svg)](https://godoc.org/github.com/sakesayso/sakescript)
+
 This document details the **SakeScript format**, a structured file format designed for the [SakeSaySo language learning app](https://sakesayso.com). SakeScript facilitates the packaging and distribution of various learning materials, such as stories and articles in a consistent and user-friendly manner. A SakeScript package is a ZIP archive containing a manifest file alongside the learning content and assets.
 
 ## SakeScript ZIP Archive Structure
